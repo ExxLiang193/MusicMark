@@ -30,5 +30,5 @@ class ScaleFingerings:
         init_sequence = cls.SEQUENCES[init_sequence_idx]
         start_finger_idx = (len(init_sequence) - first_white) % len(init_sequence)
         fingerings = init_sequence[start_finger_idx:] + cls.SEQUENCES[init_sequence_idx ^ cls.SWAP_MASK]
-        fingerings += init_sequence[: (cls.SCALE_LENGTH - len(fingerings))]
-        return cls(fingerings)
+        fingerings += init_sequence[: len(scale.notes) - len(fingerings)]
+        return cls(fingerings[::-1] if scale._desc else fingerings)

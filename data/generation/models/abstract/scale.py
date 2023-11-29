@@ -19,7 +19,7 @@ class Scale(metaclass=abc.ABCMeta):
             cur_note = notes[-1]
             next_note_name = cur_note.note_name.increment()
             notes.append(
-                Note.build(
+                Note.build_from_raw(
                     next_note_name.name_position,
                     (cur_note.rel_position + interval - next_note_name.name_position + 6) % 12 - 6,
                 )
@@ -27,4 +27,4 @@ class Scale(metaclass=abc.ABCMeta):
         offset = self._scale_mode.value
         if offset > 0:
             notes = notes[offset:-1] + notes[: (offset + 1)]
-        return notes[::-1] if self._descending else notes
+        return notes[::-1] if self._desc else notes

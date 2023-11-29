@@ -1,19 +1,19 @@
 class Alter:
-    SYMBOL_MAP = {-2: "bb", -1: "b", 0: "", 1: "#", 2: "x"}
+    SYMBOL_MAP = {-3: "bbb", -2: "bb", -1: "b", 0: "", 1: "#", 2: "x", 3: "#x"}
 
     def __init__(self, value: int) -> None:
-        assert -2 <= value <= 2
+        assert -3 <= value <= 3
         self._value = value
 
     @property
     def symbol(self) -> str:
         return self.SYMBOL_MAP[self._value]
 
-    def increment(self):
-        self._value += 1
+    def increment(self, amount: int = 1):
+        self._value += amount
 
-    def decrement(self):
-        self._value -= 1
+    def decrement(self, amount: int = 1):
+        self._value -= amount
 
     @classmethod
     def build(cls, symbol: str):
