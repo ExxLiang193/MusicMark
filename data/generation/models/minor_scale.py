@@ -1,27 +1,25 @@
 from __future__ import annotations
 
+from typing import List, Tuple
+
 from data.generation.models.abstract.scale import Scale
 from data.generation.models.constants import ScaleIntervals, ScaleMode, ScaleType
+from data.generation.models.interval import Interval
 from data.generation.models.note import Note
 
 
 class MinorScale(Scale):
-    NATURAL_INTERVALS = (2, 1, 2, 2, 1, 2, 2)
-    HARMONIC_INTERVALS = (2, 1, 2, 2, 1, 3, 1)
-    MELODIC_INTERVALS = (2, 1, 2, 2, 2, 2, 1)
-
     def __init__(
         self,
         base_note: Note,
         scale_type: ScaleType = ScaleType.NATURAL,
         scale_mode: ScaleMode = ScaleMode.IONIAN,
-        desc: bool = False,
     ) -> None:
         self._base_note: Note = base_note
-        self._intervals = self._get_intervals(scale_type)
+        self._scale_type: ScaleType = scale_type
         self._scale_mode: ScaleMode = scale_mode
-        self._desc: bool = desc
-        self.notes = self._generate_notes()
+        self.intervals: Tuple[Interval, ...] = self._get_intervals(scale_type)
+        self.notes: List[Note] = self._generate_notes()
 
     def __repr__(self) -> str:
         return " ".join(str(note).ljust(4) for note in self.notes)
@@ -39,11 +37,9 @@ class MinorScale(Scale):
         base_note_name: str,
         scale_type: ScaleType = ScaleType.NATURAL,
         scale_mode: ScaleMode = ScaleMode.IONIAN,
-        desc: bool = False,
     ) -> MinorScale:
         return cls(
             Note.build_from_name(base_note_name),
             scale_type,
             scale_mode,
-            desc,
         )

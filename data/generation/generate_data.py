@@ -1,9 +1,20 @@
+from data.generation.builders.scale_extender import ScaleExtender
+from data.generation.models.annotated_note_sequence import AnnotatedNoteSequence
 from data.generation.models.arpeggio import Arpeggio
 from data.generation.models.arpeggio_fingerings import ArpeggioFingerings
-from data.generation.models.chords import (AUG5Chord, AUGMAJ7Chord, DIM5Chord,
-                                           DIM7Chord, DOM7Chord, HalfDIM7Chord,
-                                           MAJ5Chord, MAJ7Chord, MIN5Chord,
-                                           MIN7Chord, MINMAJ7Chord)
+from data.generation.models.chords import (
+    AUG5Chord,
+    AUGMAJ7Chord,
+    DIM5Chord,
+    DIM7Chord,
+    DOM7Chord,
+    HalfDIM7Chord,
+    MAJ5Chord,
+    MAJ7Chord,
+    MIN5Chord,
+    MIN7Chord,
+    MINMAJ7Chord,
+)
 from data.generation.models.constants import Inversion, ScaleType
 from data.generation.models.major_scale import MajorScale
 from data.generation.models.minor_scale import MinorScale
@@ -81,3 +92,9 @@ for base_note_name, _ in BASE_NOTES:
                 ArpeggioFingerings.build(arpeggio),
                 class_name,
             )
+
+scale = MinorScale.build("C", ScaleType.HARMONIC)
+fingerings = ScaleFingerings.build(scale)
+annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
+extender = ScaleExtender(annotations)
+print(extender.half_sine(1))

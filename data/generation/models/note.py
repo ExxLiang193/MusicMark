@@ -12,12 +12,15 @@ class Note:
     def __repr__(self) -> str:
         return self.note_name.name + self.alter.symbol
 
+    def __eq__(self, other: Note) -> bool:
+        return self.rel_position == other.rel_position
+
     @property
-    def name(self):
+    def name(self) -> str:
         return self.note_name.name
 
     @property
-    def rel_position(self):
+    def rel_position(self) -> int:
         return self.note_name.name_position + self.alter._value
 
     def is_black_key(self) -> bool:

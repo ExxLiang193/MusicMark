@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Tuple
+from typing import List
 
 from data.generation.models.arpeggio import Arpeggio
 from data.generation.models.chords import TriadChord, SeventhChord
@@ -11,8 +11,8 @@ class ArpeggioFingerings:
     TRIAD_SEQUENCE_2 = (1, 2, 4)
     SEVENTH_SEQUENCE = (1, 2, 3, 4)
 
-    def __init__(self, fingerings: Tuple[int, ...]) -> None:
-        self.values: Tuple[int, ...] = fingerings
+    def __init__(self, fingerings: List[int]) -> None:
+        self.values: List[int] = fingerings
 
     def __repr__(self) -> str:
         return str(self.values)
@@ -29,6 +29,7 @@ class ArpeggioFingerings:
             target_sequence = cls.TRIAD_SEQUENCE_2
         elif isinstance(arpeggio._ref_chord, SeventhChord):
             target_sequence = cls.SEVENTH_SEQUENCE
+        target_sequence = list(target_sequence)
         fingerings = target_sequence[0 if first_white == float("inf") else -first_white :]
         fingerings += target_sequence[: len(arpeggio.notes) - len(fingerings)]
         return cls(fingerings)

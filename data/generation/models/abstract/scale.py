@@ -1,3 +1,4 @@
+from __future__ import annotations
 import abc
 from typing import List
 
@@ -13,9 +14,9 @@ class Scale(metaclass=abc.ABCMeta):
     def notes(self, value: List[Note]):
         self._notes = value
 
-    def _generate_notes(self):
+    def _generate_notes(self) -> List[Note]:
         notes = [self._base_note]
-        for interval in self._intervals:
+        for interval in self.intervals:
             cur_note = notes[-1]
             next_note_name = cur_note.note_name.increment()
             notes.append(
@@ -27,4 +28,4 @@ class Scale(metaclass=abc.ABCMeta):
         offset = self._scale_mode.value
         if offset > 0:
             notes = notes[offset:-1] + notes[: (offset + 1)]
-        return notes[::-1] if self._desc else notes
+        return notes
