@@ -1,4 +1,4 @@
-from data.generation.builders.scale_extender import ScaleExtender
+from data.generation.builders.note_sequence_extender import NoteSequenceExtender
 from data.generation.models.annotated_note_sequence import AnnotatedNoteSequence
 from data.generation.models.arpeggio import Arpeggio
 from data.generation.models.arpeggio_fingerings import ArpeggioFingerings
@@ -15,7 +15,7 @@ from data.generation.models.chords import (
     MIN7Chord,
     MINMAJ7Chord,
 )
-from data.generation.models.constants import Inversion, ScaleType
+from data.generation.models.constants import Inversion, ScaleMode, ScaleType
 from data.generation.models.major_scale import MajorScale
 from data.generation.models.minor_scale import MinorScale
 from data.generation.models.scale_fingerings import ScaleFingerings
@@ -74,27 +74,31 @@ for base_note_name, _ in BASE_NOTES:
     for inversion in (Inversion.ROOT, Inversion.TRIAD_FIRST, Inversion.TRIAD_SECOND):
         print("-" * 5, inversion.name, "-" * 5)
         for chord_class in TRIAD_CHORD_CLASSES:
-            class_name = chord_class.__name__
             print(
                 (arpeggio := Arpeggio.build(base_note_name, chord_class, inversion)),
                 ArpeggioFingerings.build(arpeggio),
-                class_name,
+                chord_class.__name__,
             )
 
 print("-" * 10, "SEVENTH CHORD ARPEGGIOS", "-" * 10)
 for base_note_name, _ in BASE_NOTES:
-    for inversion in (Inversion.ROOT, Inversion.TRIAD_FIRST, Inversion.TRIAD_SECOND):
+    for inversion in (Inversion.ROOT, Inversion.SEVENTH_FIRST, Inversion.SEVENTH_SECOND, Inversion.SEVENTH_THIRD):
         print("-" * 5, inversion.name, "-" * 5)
         for chord_class in SEVENTH_CHORD_CLASSES:
-            class_name = chord_class.__name__
             print(
                 (arpeggio := Arpeggio.build(base_note_name, chord_class, inversion)),
                 ArpeggioFingerings.build(arpeggio),
-                class_name,
+                chord_class.__name__,
             )
 
-scale = MinorScale.build("C", ScaleType.HARMONIC)
+scale = MinorScale.build("C", ScaleType.HARMONIC, ScaleMode.PHRYGIAN)
 fingerings = ScaleFingerings.build(scale)
 annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
-extender = ScaleExtender(annotations)
+extender = NoteSequenceExtender(annotations)
+print(extender.half_sine(1))
+
+arpeggio = Arpeggio.build("C", DIM7Chord, Inversion.ROOT)
+fingerings = ArpeggioFingerings.build(arpeggio)
+annotations = AnnotatedNoteSequence(arpeggio.notes, fingerings.values, arpeggio.intervals)
+extender = NoteSequenceExtender(annotations)
 print(extender.half_sine(1))

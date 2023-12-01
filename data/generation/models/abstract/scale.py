@@ -3,6 +3,7 @@ import abc
 from typing import List
 
 from data.generation.models.note import Note
+from data.generation.models.interval import Interval
 
 
 class Scale(metaclass=abc.ABCMeta):
@@ -13,6 +14,14 @@ class Scale(metaclass=abc.ABCMeta):
     @notes.setter
     def notes(self, value: List[Note]):
         self._notes = value
+
+    @property
+    def intervals(self) -> List[Interval]:
+        return self._intervals
+
+    @intervals.setter
+    def intervals(self, value: List[Interval]):
+        self._intervals = value
 
     def _generate_notes(self) -> List[Note]:
         notes = [self._base_note]
@@ -28,4 +37,5 @@ class Scale(metaclass=abc.ABCMeta):
         offset = self._scale_mode.value
         if offset > 0:
             notes = notes[offset:-1] + notes[: (offset + 1)]
+            self.intervals = self.intervals[offset:] + self.intervals[:offset]
         return notes

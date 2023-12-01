@@ -1,7 +1,7 @@
 from data.generation.models.annotated_note_sequence import AnnotatedNoteSequence
 
 
-class ScaleExtender:
+class NoteSequenceExtender:
     def __init__(self, ref_sequence: AnnotatedNoteSequence) -> None:
         self._ref_sequence: AnnotatedNoteSequence = ref_sequence
 

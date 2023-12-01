@@ -22,7 +22,7 @@ class AnnotatedNoteSequence:
         )
 
     def __getitem__(self, idx: slice) -> AnnotatedNoteSequence:
-        safe_start, safe_stop = (idx.start or -sys.maxsize, idx.stop or sys.maxsize)
+        safe_start, safe_stop = (idx.start or 0, idx.stop or sys.maxsize)
         return AnnotatedNoteSequence(
             self.notes[idx],
             self.fingerings[idx],
@@ -32,6 +32,7 @@ class AnnotatedNoteSequence:
     def __add__(self, other: AnnotatedNoteSequence) -> AnnotatedNoteSequence:
         assert self.notes[-1] == other.notes[0]
         new_fingerings = self.fingerings + other.fingerings[1:]
+        # If the intervals change directions (notes create a local max/min)
         if self.intervals[-1].value * other.intervals[0].value < 0:
             new_fingerings[len(self.fingerings) - 1] = new_fingerings[len(self.fingerings) - 2] + (
                 1 if self.intervals[-1].value >= 0 else -1

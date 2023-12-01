@@ -10,11 +10,24 @@ class Interval:
 
     def __add__(self, other: Interval | int) -> Interval | int:
         if isinstance(other, int):
+            return Interval(self.value + other)
+        elif isinstance(other, Interval):
+            return Interval(self.value + other.value)
+
+    def __radd__(self, other: Interval | int) -> Interval | int:
+        if isinstance(other, int):
             return self.value + other
         elif isinstance(other, Interval):
             return Interval(self.value + other.value)
 
-    __radd__ = __add__
+    def __sub__(self, other: Interval | int) -> Interval | int:
+        if isinstance(other, int):
+            return self.value - other
+        elif isinstance(other, Interval):
+            return Interval(self.value - other.value)
+
+    def __mod__(self, other: int) -> Interval:
+        return Interval(self.value % other)
 
     @property
     def inverse(self):
