@@ -9,6 +9,9 @@ class Note:
         self.note_name: NoteName = note_name
         self.alter: Alter = alter
 
+    def __hash__(self) -> int:
+        return hash(self.rel_position)
+
     def __repr__(self) -> str:
         return self.note_name.name + self.alter.symbol
 
@@ -21,7 +24,7 @@ class Note:
 
     @property
     def rel_position(self) -> int:
-        return self.note_name.name_position + self.alter._value
+        return (self.note_name.name_position + self.alter._value) % 12
 
     def is_black_key(self) -> bool:
         return self.rel_position in NoteName.BLACK_POSITIONS

@@ -29,6 +29,9 @@ class Interval:
     def __mod__(self, other: int) -> Interval:
         return Interval(self.value % other)
 
+    def __eq__(self, other: Interval) -> bool:
+        return self.value == other.value
+
     @property
     def inverse(self):
         return Interval(-self.value)

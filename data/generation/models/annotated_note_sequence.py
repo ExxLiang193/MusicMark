@@ -15,8 +15,18 @@ class AnnotatedNoteSequence:
         self.fingerings: List[int] = fingerings
         self.intervals: Tuple[Interval, ...] = intervals
 
+    def __eq__(self, other: AnnotatedNoteSequence) -> bool:
+        return self.notes == other.notes and self.fingerings == other.fingerings and self.intervals == other.intervals
+
+    def __hash__(self) -> int:
+        note_fingerings = (f"{note.rel_position},{fingering}" for note, fingering in zip(self.notes, self.fingerings))
+        self_str = f"{next(note_fingerings)} " + " ".join(
+            f"<{interval}> {note_fingering}" for note_fingering, interval in zip(note_fingerings, self.intervals)
+        )
+        return hash(self_str)
+
     def __repr__(self) -> str:
-        note_fingerings = (f"[{fingering}]{note}" for note, fingering in zip(self.notes, self.fingerings))
+        note_fingerings = (f"({note},{fingering})" for note, fingering in zip(self.notes, self.fingerings))
         return f"{next(note_fingerings)} " + " ".join(
             f"<{interval}> {note_fingering}" for note_fingering, interval in zip(note_fingerings, self.intervals)
         )
@@ -26,7 +36,7 @@ class AnnotatedNoteSequence:
         return AnnotatedNoteSequence(
             self.notes[idx],
             self.fingerings[idx],
-            self.intervals[max(0, safe_start - 1) : safe_stop - 1],
+            self.intervals[max(0, safe_start) : safe_stop - 1],
         )
 
     def __add__(self, other: AnnotatedNoteSequence) -> AnnotatedNoteSequence:
@@ -44,6 +54,9 @@ class AnnotatedNoteSequence:
         for _ in range(amount - 1):
             result += result
         return result
+
+    def __len__(self) -> int:
+        return len(self.notes)
 
     @property
     def reverse(self) -> AnnotatedNoteSequence:

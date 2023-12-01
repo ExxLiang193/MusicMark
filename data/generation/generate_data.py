@@ -1,4 +1,7 @@
+import pprint
+
 from data.generation.builders.note_sequence_extender import NoteSequenceExtender
+from data.generation.builders.note_sequence_permuter import NoteSequencePermuter
 from data.generation.models.annotated_note_sequence import AnnotatedNoteSequence
 from data.generation.models.arpeggio import Arpeggio
 from data.generation.models.arpeggio_fingerings import ArpeggioFingerings
@@ -52,53 +55,118 @@ SEVENTH_CHORD_CLASSES = (
     MINMAJ7Chord,
     AUGMAJ7Chord,
 )
+SCALE_MODES = (
+    ScaleMode.IONIAN,
+    ScaleMode.DORIAN,
+    ScaleMode.PHRYGIAN,
+    ScaleMode.LYDIAN,
+    ScaleMode.MIXOLYDIAN,
+    ScaleMode.AEOLIAN,
+    ScaleMode.LOCRIAN,
+)
 
-print("-" * 10, "MAJOR SCALES", "-" * 10)
-for base_note_name, accidentals in BASE_NOTES:
-    print((scale := MajorScale.build(base_note_name)), ScaleFingerings.build(scale), accidentals)
+# print("-" * 10, "MAJOR SCALES", "-" * 10)
+# for base_note_name, accidentals in BASE_NOTES:
+#     print((scale := MajorScale.build(base_note_name)), ScaleFingerings.build(scale), accidentals)
 
-print("-" * 10, "MINOR (NATURAL) SCALES", "-" * 10)
-for base_note_name, accidentals in BASE_NOTES:
-    print((scale := MinorScale.build(base_note_name)), ScaleFingerings.build(scale), accidentals)
+# print("-" * 10, "MINOR (NATURAL) SCALES", "-" * 10)
+# for base_note_name, accidentals in BASE_NOTES:
+#     print((scale := MinorScale.build(base_note_name)), ScaleFingerings.build(scale), accidentals)
 
-print("-" * 10, "MINOR (HARMONIC) SCALES", "-" * 10)
-for base_note_name, accidentals in BASE_NOTES:
-    print((scale := MinorScale.build(base_note_name, ScaleType.HARMONIC)), ScaleFingerings.build(scale), accidentals)
+# print("-" * 10, "MINOR (HARMONIC) SCALES", "-" * 10)
+# for base_note_name, accidentals in BASE_NOTES:
+#     print((scale := MinorScale.build(base_note_name, ScaleType.HARMONIC)), ScaleFingerings.build(scale), accidentals)
 
-print("-" * 10, "MINOR (MELODIC) SCALES", "-" * 10)
-for base_note_name, accidentals in BASE_NOTES:
-    print((scale := MinorScale.build(base_note_name, ScaleType.MELODIC)), ScaleFingerings.build(scale), accidentals)
+# print("-" * 10, "MINOR (MELODIC) SCALES", "-" * 10)
+# for base_note_name, accidentals in BASE_NOTES:
+#     print((scale := MinorScale.build(base_note_name, ScaleType.MELODIC)), ScaleFingerings.build(scale), accidentals)
 
-print("-" * 10, "TRIAD CHORD ARPEGGIOS", "-" * 10)
-for base_note_name, _ in BASE_NOTES:
-    for inversion in (Inversion.ROOT, Inversion.TRIAD_FIRST, Inversion.TRIAD_SECOND):
-        print("-" * 5, inversion.name, "-" * 5)
-        for chord_class in TRIAD_CHORD_CLASSES:
-            print(
-                (arpeggio := Arpeggio.build(base_note_name, chord_class, inversion)),
-                ArpeggioFingerings.build(arpeggio),
-                chord_class.__name__,
-            )
+# print("-" * 10, "TRIAD CHORD ARPEGGIOS", "-" * 10)
+# for base_note_name, _ in BASE_NOTES:
+#     for inversion in (Inversion.ROOT, Inversion.TRIAD_FIRST, Inversion.TRIAD_SECOND):
+#         print("-" * 5, inversion.name, "-" * 5)
+#         for chord_class in TRIAD_CHORD_CLASSES:
+#             print(
+#                 (arpeggio := Arpeggio.build(base_note_name, chord_class, inversion)),
+#                 ArpeggioFingerings.build(arpeggio),
+#                 chord_class.__name__,
+#             )
 
-print("-" * 10, "SEVENTH CHORD ARPEGGIOS", "-" * 10)
-for base_note_name, _ in BASE_NOTES:
-    for inversion in (Inversion.ROOT, Inversion.SEVENTH_FIRST, Inversion.SEVENTH_SECOND, Inversion.SEVENTH_THIRD):
-        print("-" * 5, inversion.name, "-" * 5)
-        for chord_class in SEVENTH_CHORD_CLASSES:
-            print(
-                (arpeggio := Arpeggio.build(base_note_name, chord_class, inversion)),
-                ArpeggioFingerings.build(arpeggio),
-                chord_class.__name__,
-            )
+# print("-" * 10, "SEVENTH CHORD ARPEGGIOS", "-" * 10)
+# for base_note_name, _ in BASE_NOTES:
+#     for inversion in (Inversion.ROOT, Inversion.SEVENTH_FIRST, Inversion.SEVENTH_SECOND, Inversion.SEVENTH_THIRD):
+#         print("-" * 5, inversion.name, "-" * 5)
+#         for chord_class in SEVENTH_CHORD_CLASSES:
+#             print(
+#                 (arpeggio := Arpeggio.build(base_note_name, chord_class, inversion)),
+#                 ArpeggioFingerings.build(arpeggio),
+#                 chord_class.__name__,
+#             )
 
-scale = MinorScale.build("C", ScaleType.HARMONIC, ScaleMode.PHRYGIAN)
-fingerings = ScaleFingerings.build(scale)
-annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
-extender = NoteSequenceExtender(annotations)
-print(extender.half_sine(1))
+# scale = MinorScale.build("C", ScaleType.HARMONIC, ScaleMode.PHRYGIAN)
+# fingerings = ScaleFingerings.build(scale)
+# annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
+# extender = NoteSequenceExtender(annotations)
+# print(extender.half_sine(2))
 
-arpeggio = Arpeggio.build("C", DIM7Chord, Inversion.ROOT)
-fingerings = ArpeggioFingerings.build(arpeggio)
-annotations = AnnotatedNoteSequence(arpeggio.notes, fingerings.values, arpeggio.intervals)
-extender = NoteSequenceExtender(annotations)
-print(extender.half_sine(1))
+# arpeggio = Arpeggio.build("C", DIM7Chord, Inversion.ROOT)
+# fingerings = ArpeggioFingerings.build(arpeggio)
+# annotations = AnnotatedNoteSequence(arpeggio.notes, fingerings.values, arpeggio.intervals)
+# extender = NoteSequenceExtender(annotations)
+# print(extender.half_sine(2))
+
+
+def generate_sequences():
+    for base_note_name, _ in BASE_NOTES:
+        for scale_mode in SCALE_MODES:
+            scale = MajorScale.build(base_note_name, scale_mode)
+            fingerings = ScaleFingerings.build(scale)
+            annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
+            extender = NoteSequenceExtender(annotations)
+            yield extender.half_sine(2)
+
+    for base_note_name, _ in BASE_NOTES:
+        for scale_mode in SCALE_MODES:
+            scale = MinorScale.build(base_note_name, ScaleType.NATURAL, scale_mode)
+            fingerings = ScaleFingerings.build(scale)
+            annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
+            extender = NoteSequenceExtender(annotations)
+            yield extender.half_sine(2)
+
+    for base_note_name, _ in BASE_NOTES:
+        for scale_mode in SCALE_MODES:
+            scale = MinorScale.build(base_note_name, ScaleType.HARMONIC, scale_mode)
+            fingerings = ScaleFingerings.build(scale)
+            annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
+            extender = NoteSequenceExtender(annotations)
+            yield extender.half_sine(2)
+
+    for base_note_name, _ in BASE_NOTES:
+        for scale_mode in SCALE_MODES:
+            scale = MinorScale.build(base_note_name, ScaleType.MELODIC, scale_mode)
+            fingerings = ScaleFingerings.build(scale)
+            annotations = AnnotatedNoteSequence(scale.notes, fingerings.values, scale.intervals)
+            extender = NoteSequenceExtender(annotations)
+            yield extender.half_sine(2)
+
+    for base_note_name, _ in BASE_NOTES:
+        for inversion in (Inversion.ROOT, Inversion.TRIAD_FIRST, Inversion.TRIAD_SECOND):
+            for chord_class in TRIAD_CHORD_CLASSES:
+                arpeggio = Arpeggio.build(base_note_name, chord_class, inversion)
+                fingerings = ArpeggioFingerings.build(arpeggio)
+                annotations = AnnotatedNoteSequence(arpeggio.notes, fingerings.values, arpeggio.intervals)
+                extender = NoteSequenceExtender(annotations)
+                yield extender.half_sine(2)
+
+    for base_note_name, _ in BASE_NOTES:
+        for inversion in (Inversion.ROOT, Inversion.SEVENTH_FIRST, Inversion.SEVENTH_SECOND, Inversion.SEVENTH_THIRD):
+            for chord_class in SEVENTH_CHORD_CLASSES:
+                arpeggio = Arpeggio.build(base_note_name, chord_class, inversion)
+                fingerings = ArpeggioFingerings.build(arpeggio)
+                annotations = AnnotatedNoteSequence(arpeggio.notes, fingerings.values, arpeggio.intervals)
+                extender = NoteSequenceExtender(annotations)
+                yield extender.half_sine(2)
+
+
+pp = pprint.PrettyPrinter(indent=4)
+pp.pprint(NoteSequencePermuter(generate_sequences())._prefix_map)
