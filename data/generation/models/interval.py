@@ -32,6 +32,18 @@ class Interval:
     def __eq__(self, other: Interval) -> bool:
         return self.value == other.value
 
+    def __lt__(self, other: Interval | int) -> bool:
+        if isinstance(other, int):
+            return self.value < other
+        elif isinstance(other, Interval):
+            return self.value < other.value
+
+    def __gt__(self, other: Interval | int) -> bool:
+        if isinstance(other, int):
+            return self.value > other
+        elif isinstance(other, Interval):
+            return self.value > other.value
+
     @property
     def inverse(self):
         return Interval(-self.value)

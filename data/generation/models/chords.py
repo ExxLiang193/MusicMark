@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Final
 from data.generation.models.abstract.scale import Scale
 
 from data.generation.models.interval import Interval
@@ -117,3 +117,20 @@ class AUGMAJ7Chord(SeventhChord):
     def __init__(self, base_note: Note) -> None:
         super(AUGMAJ7Chord, self).__init__(base_note)
         self._adjust_note(position=5, delta=1)
+
+
+TRIAD_CHORD_CLASSES: Final[BaseChord] = (
+    MAJ5Chord,
+    MIN5Chord,
+    DIM5Chord,
+    AUG5Chord,
+)
+SEVENTH_CHORD_CLASSES: Final[BaseChord] = (
+    MAJ7Chord,
+    MIN7Chord,
+    DOM7Chord,
+    DIM7Chord,
+    HalfDIM7Chord,
+    MINMAJ7Chord,
+    AUGMAJ7Chord,
+)
