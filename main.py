@@ -12,7 +12,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="")
     parser.add_argument("--generate-data", action="store_true")
     parser.add_argument("--amount", "--amt", type=int)
-    parser.add_argument("--out-file", type=str, default="note_sequences.txt")
+    parser.add_argument("--out-file", type=str, default="data/note_sequences.txt")
     return parser.parse_args()
 
 
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     args = parse_args()
     if args.generate_data:
         permuter = NoteSequencePermuter(generate_sequences(), stride=1)
-        note_sequences = permuter.permute(5)
+        note_sequences = permuter.permute_random(10, int(1e6))
         print("Note sequences generated:", len(note_sequences))
         sampled_data: List[AnnotatedNoteSequence] = random.sample(note_sequences, int(args.amount))
         print("Note sequences sampled:", len(sampled_data))
