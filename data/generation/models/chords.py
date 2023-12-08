@@ -19,9 +19,9 @@ class BaseChord:
 
     def _adjust_note(self, position: int, delta: int) -> None:
         if delta > 0:
-            self.positions[position].increment(delta)
+            self.positions[position].raise_(delta)
         elif delta < 0:
-            self.positions[position].decrement(abs(delta))
+            self.positions[position].lower_(abs(delta))
         self.intervals[position] += delta
 
     def __repr__(self) -> str:

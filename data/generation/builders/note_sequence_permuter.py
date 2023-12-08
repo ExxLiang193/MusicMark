@@ -2,7 +2,10 @@ import random
 from collections import defaultdict, deque
 from typing import Dict, Generator, List, Tuple
 
-from data.generation.builders.note_sequence_filters import non_consecutive_finger_crossing
+from data.generation.builders.note_sequence_filters import (
+    non_adjacent_weak_finger_crossing,
+    non_consecutive_finger_crossing,
+)
 from data.generation.models.annotated_note_sequence import AnnotatedNoteSequence
 
 
@@ -12,7 +15,7 @@ class NoteSequencePermuter:
         self._prefix_map: Dict[Tuple[int, int], List[AnnotatedNoteSequence]] = self._compute_map(
             sequence_source, stride
         )
-        self._transition_filters = (non_consecutive_finger_crossing,)
+        self._transition_filters = (non_consecutive_finger_crossing, non_adjacent_weak_finger_crossing)
 
     def _compute_map(
         self,

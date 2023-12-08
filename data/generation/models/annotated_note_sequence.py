@@ -8,15 +8,12 @@ from data.generation.models.note import Note
 
 
 class AnnotatedNoteSequence:
-    def __init__(
-        self, notes: List[Note], fingerings: List[int], intervals: Tuple[Interval, ...], infer_fingerings: bool = True
-    ) -> None:
+    def __init__(self, notes: List[Note], fingerings: List[int], intervals: Tuple[Interval, ...]) -> None:
         assert len(fingerings) == len(notes)
         assert len(intervals) == len(notes) - 1
         self.notes: List[Note] = notes
         self.fingerings: List[int] = fingerings
         self.intervals: Tuple[Interval, ...] = intervals
-        self._infer_fingerings: bool = infer_fingerings
 
     def __eq__(self, other: AnnotatedNoteSequence) -> bool:
         return self.notes == other.notes and self.fingerings == other.fingerings and self.intervals == other.intervals
@@ -45,11 +42,6 @@ class AnnotatedNoteSequence:
     def __add__(self, other: AnnotatedNoteSequence) -> AnnotatedNoteSequence:
         assert self.notes[-1] == other.notes[0]
         new_fingerings = self.fingerings + other.fingerings[1:]
-        # If the intervals change directions (notes create a local max/min)
-        # if self._infer_fingerings and self.intervals[-1].value * other.intervals[0].value < 0:
-        #     new_fingerings[len(self.fingerings) - 1] = new_fingerings[len(self.fingerings) - 2] + (
-        #         1 if self.intervals[-1].value >= 0 else -1
-        #     )
         return AnnotatedNoteSequence(self.notes + other.notes[1:], new_fingerings, self.intervals + other.intervals)
 
     def __mul__(self, amount: int) -> AnnotatedNoteSequence:
