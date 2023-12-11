@@ -1,0 +1,38 @@
+from __future__ import annotations
+
+from typing import Optional
+
+from prediction.models.accidental import Accidental
+from prediction.models.constants import OCTAVE_SUBDIVISIONS, BaseNoteName
+from prediction.models.position import Position
+
+
+class NoteName:
+    NAME_MAP = {
+        BaseNoteName.C: 0,
+        BaseNoteName.D: 2,
+        BaseNoteName.E: 4,
+        BaseNoteName.F: 5,
+        BaseNoteName.G: 7,
+        BaseNoteName.A: 9,
+        BaseNoteName.B: 11,
+    }
+
+    def __init__(self, name: str, accidental: Accidental) -> None:
+        self.name: BaseNoteName = name
+        self.accidental: Accidental = accidental
+
+    def __repr__(self) -> str:
+        return f"{self.name}{self.accidental}"
+
+    @classmethod
+    def from_raw(cls, name: str, alter: Optional[int]) -> NoteName:
+        return NoteName(name, Accidental(alter))
+
+    @property
+    def rel_position(self) -> int:
+        return (self.NAME_MAP[self.name] + self.accidental.alter) % OCTAVE_SUBDIVISIONS
+
+    def as_position(self, octave: int) -> Position:
+        rel_position: int = self.NAME_MAP[self.name] + self.accidental.alter
+        return Position((octave + rel_position // OCTAVE_SUBDIVISIONS) * OCTAVE_SUBDIVISIONS + self.rel_position)

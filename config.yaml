@@ -1,0 +1,4 @@
+input_size: 10
+hidden_size: 32
+output_size: 6
+n_layers: 2
