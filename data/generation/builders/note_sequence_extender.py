@@ -11,4 +11,6 @@ class NoteSequenceExtender:
         if self._infer_fingerings:
             mid: int = (len(extension) - 1) // 2
             extension.fingerings[mid] = extension.fingerings[mid - 1] + 1
+            if abs(extension.intervals[mid - 1]) >= 3:
+                extension.fingerings[mid] = min(extension.fingerings[mid] + 1, 5)
         return extension

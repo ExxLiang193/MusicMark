@@ -3,6 +3,8 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from typing import Dict, List
 
+from prediction.models.note_sequence import NoteSequence
+
 
 class MusicXMLWriter:
     NEW_FILE_SUFFIX = "_annotated"

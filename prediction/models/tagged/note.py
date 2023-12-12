@@ -20,7 +20,7 @@ class TaggedNote(Note):
 
     @fingering.setter
     def fingering(self, value: int) -> None:
-        assert 1 <= value <= 5
+        assert 1 <= value <= 5, str(value)
         self._fingering: int = value
 
     def __repr__(self) -> str:

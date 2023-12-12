@@ -11,7 +11,8 @@ class BaseChord:
         self.positions: Dict[int, Note] = dict()
         self.intervals: Dict[int, Interval] = dict()
         self._ref_scale: Scale = MajorScale(base_note)
-        self._add_note(1)
+        self._add_note(position=1)
+        self._add_note(position=8)
 
     def _add_note(self, position: int) -> None:
         self.positions[position] = self._ref_scale.notes[position - 1]

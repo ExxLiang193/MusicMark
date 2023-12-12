@@ -14,22 +14,25 @@ class MinorScale(Scale):
         base_note: Note,
         scale_type: ScaleType = ScaleType.NATURAL,
         scale_mode: ScaleMode = ScaleMode.IONIAN,
+        rh: bool = True,
     ) -> None:
         self._base_note: Note = base_note
         self._scale_type: ScaleType = scale_type
         self._scale_mode: ScaleMode = scale_mode
-        self.intervals: Tuple[Interval, ...] = self._get_intervals(scale_type)
-        self.notes: List[Note] = self._generate_notes()
+        self.intervals: Tuple[Interval, ...] = self._get_intervals(scale_type, rh)
+        self.notes: List[Note] = self._generate_notes(rh)
 
     def __repr__(self) -> str:
         return " ".join(str(note).ljust(4) for note in self.notes)
 
-    def _get_intervals(self, scale_type: ScaleType):
+    def _get_intervals(self, scale_type: ScaleType, rh: bool) -> Tuple[Interval, ...]:
         if scale_type == ScaleType.HARMONIC:
-            return ScaleIntervals.MINOR_HARMONIC
+            intervals = ScaleIntervals.MINOR_HARMONIC
         elif scale_type == ScaleType.MELODIC:
-            return ScaleIntervals.MINOR_MELODIC
-        return ScaleIntervals.MINOR_NATURAL
+            intervals = ScaleIntervals.MINOR_MELODIC
+        else:
+            intervals = ScaleIntervals.MINOR_NATURAL
+        return intervals if rh else tuple(interval.inverse for interval in reversed(intervals))
 
     @classmethod
     def build(
@@ -37,9 +40,11 @@ class MinorScale(Scale):
         base_note_name: str,
         scale_type: ScaleType = ScaleType.NATURAL,
         scale_mode: ScaleMode = ScaleMode.IONIAN,
+        rh: bool = True,
     ) -> MinorScale:
         return cls(
             Note.build_from_name(base_note_name),
             scale_type,
             scale_mode,
+            rh,
         )

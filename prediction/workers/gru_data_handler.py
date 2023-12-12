@@ -23,7 +23,7 @@ class GRUDataHandler:
         ]
         predictions: List[int] = list()
         for i in range(len(positions)):
-            if positions[i][0] is not None:
+            if positions[i][0] is not None and len(positions[i]) > 1:
                 prediction = self._model_predictor.evaluate_continuous(
                     positions=positions[i],
                     intervals=intervals[i],
@@ -31,5 +31,5 @@ class GRUDataHandler:
                 )
                 predictions.append(prediction)
             else:
-                predictions.append(positions[i])
+                predictions.append([None] * len(positions[i]))
         return sum(predictions, list())

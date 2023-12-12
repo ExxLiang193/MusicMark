@@ -13,22 +13,28 @@ class MajorScale(Scale):
         self,
         base_note: Note,
         scale_mode: ScaleMode = ScaleMode.IONIAN,
+        rh: bool = True,
     ) -> None:
         self._base_note: Note = base_note
         self._scale_mode: ScaleMode = scale_mode
-        self.intervals: Tuple[Interval, ...] = ScaleIntervals.MAJOR
-        self.notes: List[Note] = self._generate_notes()
+        self.intervals: Tuple[Interval, ...] = self._get_intervals(rh)
+        self.notes: List[Note] = self._generate_notes(rh)
 
     def __repr__(self) -> str:
         return " ".join(str(note).ljust(4) for note in self.notes)
+
+    def _get_intervals(self, rh: bool) -> Tuple[Interval, ...]:
+        return ScaleIntervals.MAJOR if rh else tuple(interval.inverse for interval in reversed(ScaleIntervals.MAJOR))
 
     @classmethod
     def build(
         cls,
         base_note_name: str,
         scale_mode: ScaleMode = ScaleMode.IONIAN,
+        rh: bool = True,
     ) -> MajorScale:
         return cls(
             Note.build_from_name(base_note_name),
             scale_mode,
+            rh,
         )

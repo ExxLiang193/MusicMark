@@ -8,6 +8,9 @@ class Interval:
     def __repr__(self) -> str:
         return str(self.value)
 
+    def __abs__(self) -> int:
+        return abs(self.value)
+
     def __add__(self, other: Interval | int) -> Interval | int:
         if isinstance(other, int):
             return Interval(self.value + other)

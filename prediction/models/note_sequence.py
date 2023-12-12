@@ -64,11 +64,11 @@ class NoteSequence:
 
     @property
     def raw_rel_positions(self) -> List[int]:
-        return [note.position.rel_position if note.position else None for note in self.notes]
+        return [(note.position.rel_position if note.position is not None else None) for note in self.notes]
 
     @property
     def raw_abs_positions(self) -> List[int]:
-        return [note.position.abs_position if note.position else None for note in self.notes]
+        return [(note.position.abs_position if note.position is not None else None) for note in self.notes]
 
     def raw_intervals_range(self, low: int, high: int) -> List[Optional[int]]:
         """[low, high]"""
