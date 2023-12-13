@@ -28,7 +28,7 @@ FINGERS_INTERVALS: Final[List[FingerIntervals]] = [
     if (i, j) in _SPECIAL_INTERVALS
     else FingerIntervals(from_finger=i, to_finger=j, intervals=range(0, 1))
     for i in range(1, 6)
-    for j in range(1, 6)
+    for j in range(i, 6)
 ]
 
 

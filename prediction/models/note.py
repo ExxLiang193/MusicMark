@@ -21,6 +21,10 @@ class Note:
     def __hash__(self) -> int:
         return hash(repr(self))
 
+    def __lt__(self, other: None) -> bool:
+        """Set to True for now for hashing comparison purposes."""
+        return True
+
     def is_rest(self) -> bool:
         return self.position is None
 

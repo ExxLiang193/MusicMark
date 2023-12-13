@@ -55,6 +55,8 @@ class MusicXMLReader:
 
                 if note_element.find("rest") is not None:
                     voice_note_sequences[voice_idx].append_note(musicxml_factory.build_rest(note_element, note_id))
+                elif note_element.find("chord") is not None:
+                    voice_note_sequences[voice_idx].stack_last_note(musicxml_factory.build_note(note_element, note_id))
                 elif (tie_element := note_element.find("tie")) is not None and tie_element.attrib["type"] == "stop":
                     voice_note_sequences[voice_idx].merge_last_note(musicxml_factory.build_note(note_element, note_id))
                 else:

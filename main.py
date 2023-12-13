@@ -1,4 +1,5 @@
 import argparse
+import pprint
 import random
 import time
 from decimal import FloatOperation, getcontext
@@ -12,8 +13,12 @@ from data.generation.models.annotated_note_sequence import AnnotatedNoteSequence
 from prediction.io.readers.musicxml.musicxml_reader import MusicXMLReader
 from prediction.io.writers.musicxml.musicxml_writer import MusicXMLWriter
 from prediction.models.composition import Composition
+from prediction.models.compressed_note_sequence import NoteSequenceCompressor
+from prediction.models.note_sequence import NoteSequence
 from prediction.nn.model_loader import load_model
 from prediction.workers.gru_data_handler import GRUDataHandler
+
+pp = pprint.PrettyPrinter(indent=4)
 
 
 def enable_safe_float_handling() -> None:
@@ -53,14 +58,24 @@ if __name__ == "__main__":
         composition: Composition = MusicXMLReader(args.in_file).to_composition()
         rh_data_handler: GRUDataHandler = GRUDataHandler(load_model(args.rh_model, **config))
         lh_data_handler: GRUDataHandler = GRUDataHandler(load_model(args.lh_model, **config))
+
+        sequence_compressor: NoteSequenceCompressor = NoteSequenceCompressor()
+        rh_voices: NoteSequence = sequence_compressor.compress(composition.rh_voices)
+        lh_voices: NoteSequence = sequence_compressor.compress(composition.lh_voices)
+
         t0 = time.time()
-        for voice in composition.voices.keys():
-            if is_rh := voice <= 4:
-                predicted_fingerings: List[int] = rh_data_handler.get_predictions(composition.voices[voice])
-            else:
-                predicted_fingerings: List[int] = lh_data_handler.get_predictions(composition.voices[voice])
-            for note, fingering in zip(composition.voices[voice].notes, predicted_fingerings):
-                if fingering is not None:
-                    note.fingering = fingering
+        rh_predicted_fingerings: List[int] = rh_data_handler.get_predictions(rh_voices)
+        lh_predicted_fingerings: List[int] = lh_data_handler.get_predictions(lh_voices)
+
+        for note, fingering in zip(reversed(rh_voices.notes), reversed(rh_predicted_fingerings)):
+            if fingering is not None:
+                note.fingering = fingering
+
+        for note, fingering in zip(reversed(lh_voices.notes), reversed(lh_predicted_fingerings)):
+            if fingering is not None:
+                note.fingering = fingering
+
         print(f"Fingerings computed in: {round(time.time() - t0, 2)} sec")
+
+        composition.flatten_voices()
         MusicXMLWriter(args.in_file).set_predictions(composition.voices)
