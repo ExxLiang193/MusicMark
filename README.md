@@ -22,6 +22,7 @@ Automatically predict fingerings for music notes for the piano using RNNs.
       - [Sampled permutation](#sampled-permutation)
     - [Model training](#model-training-1)
     - [Model prediction](#model-prediction-1)
+  - [TO-DO List](#to-do-list)
 
 *README last updated December 13th, 2023.*
 
@@ -220,10 +221,64 @@ A transition map is made, built from each interval transition from position to p
 
 ![Permutation creation](images/permutation_creation.png)
 
-The `--length` and `--amount` command-line parameters control the length of the sequences generated and the number of such sequences to be generated.
+The `--length` and `--amount` command-line parameters control the length of the sequences generated and the number of such sequences to be generated. Post-permutation *filters* and *scoring mechanisms* also exist to optimize the quality of the generated sequences.
 
 The note sequences for LH and RH are then all encoded into separate DSV files readable for model training.
 
 ### Model training
 
+Two models must be trained: one for the LH and one for the RH. `N_NOTES` is a variable in the model training notebook which is equal to $N$. `TARGET_INDEX` is the index of the note sequence used for prediction. For the purpose of simplicity, let the following walkthrough use `N_NOTES` $=N=6$ and `TARGET_INDEX = 2`, where `TARGET_INDEX` is zero-indexed.
+
+A visual and spatial representation of the data is the following:
+![Data visualization](images/data_visualize.png)
+
+The following transformations are applied on the read-in values to create features:
+- For each $i$, apply circular transformation: compute $\sin(P[i])$ and $\cos(P[i])$. This creates spatial locality between $P$ values $0$ and $11$.
+- For each $i$, scale each interval value from $I$ down by a factor of $12$ to create similar relative magnitudes as other features.
+- For each $i$, apply 1-hot encoding for the fingerings $F$ used as part of the recursive input. The dimension of the 1-hot encoding is $6$ to account for the *sentinel* value of $0$. Zero all fingerings at index `> TARGET_INDEX` to hide the expected values.
+- Prepend $F$ and $I$ with a padding $0$ value.
+
+The neural network model used is the Gated Recurrent Unit (GRU), a type of Recurrent Neural Network (RNN). It is effective as it is designed to be sequentially fed with sequential data like what is present. It is also designed to avoid exploding/disappearing gradients. Negative log-likelihood loss (`NLLLoss`) is used in combination with a log-softmax activation function to create a probabilistic output distribution. The model is created using `PyTorch` and is composed of a 2-layer hidden matrix, each layer composed of $32$ nodes.
+
+Before sending the data to the model, a **permutation** is also applied on $P$, $I$, and $F$ so that the value to be predicted is at the end of the sequence, thus the permutation is the following in pseudocode:
+
+```python
+PERMUTATION = (0, ..., TARGET_INDEX - 1, TARGET_INDEX + 1, ..., N - 1, TARGET_INDEX)
+```
+
+The following is a diagram of how the feed-forward process proceeds during model training:
+![Training loop](images/training_loop.png)
+
+The resulting models for both LH and RH can be saved. Currently, models pass validation at approximately $80\%$ to $90\%$ accuracy.
+
 ### Model prediction
+
+Upon reading in and parsing the note information provided by a data-encoded file, the positions and intervals are extracted.
+
+Rests in the music do not have intervals with adjacent notes.
+
+Because one of the more desirable but challenging aspects of fingering assignment involves assigning fingerings to multiple voices commanded by one hand and/or chords present in a single voice, the structures must be flattened from the possibility of multiple simultaneous/concurrent notes into a note sequence that is compatible with the trained model. Thus, if what's below is interpreted as two voices commanded by one hand, then the note extraction is the following:
+
+![Flattening](images/flattening.png)
+
+The darker arrows represent the held duration of each note, while the bright white arrow represents the order the note sequence is represented. Note the duplication of held notes added to the sequence upon the progression of other voices. This is due to the observation that any chord can be arpeggiated and still possess an equivalent fingering to the solid held chord.
+
+However, this was a preliminary design choice that has now seen to be insufficient at capturing the adjacency of the fingerings of independent voices, so a slight redesign is needed.
+
+Upon flattening of a hand's (LH/RH) voices into a 1-dimensional note sequence, the monolithic note sequence is split using *rests* as a *delimiter*. Due to the fact that the model requires prior information in the form of positions, intervals, and fingerings: for each subsequence, $0$-padding is applied to the left and right of the subsequence, enough to allow the indices to under- and over-shoot the boundaries such that every position $i$ of $P$ undergoes fingering prediction.
+
+The process is illustrated below on `N_NOTES = 6` and `TARGET_INDEX = 2`:
+![Evaluation](images/evaluation.png)
+
+Note that, unlike model training, predicted fingerings are fed back into the model, hence the name Recurrent Neural Network. And thus, fingerings are assigned to each note, and re-encoded back into an output data format.
+
+Total runtimes of the model prediction process have been less than $0.5$ seconds for *Bach's* fugues from the *Well-Tempered Clavier*.
+
+## TO-DO List
+
+- [ ] Automated intelligent voice joining $^1$
+- [ ] Chord handling redesign
+- [ ] Remove need for time signature
+- [ ] Further improve validation accuracy and robustness of GRU model
+
+$^1$ Mainly because of human score design, at some points, the voice assignment of a relatively continuous stream of notes changes even though it shouldn't. This can cut a voice into pieces and create discontinuities in fingering, though relatively insignificant.
